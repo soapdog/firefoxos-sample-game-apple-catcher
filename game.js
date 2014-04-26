@@ -6,12 +6,14 @@ var timer = 0;
 var total = 0;
 var score = 0;
 var frutas;
+var estragadas;
 var scoreText;
 
 function preload() {
 
     game.load.image('cenario', 'assets/pics/cenario.png');
     game.load.image('fruta_boa', 'assets/pics/fruta_boa.png');
+    game.load.image('fruta_ruim', 'assets/pics/fruta_ruim.png');
     game.load.image('cesta', 'assets/pics/cesta.png');
 
 }
@@ -35,6 +37,11 @@ function create() {
     frutas.enableBody = true;
     frutas.physicsBodyType = Phaser.Physics.ARCADE;
 
+    // Adiciona as estragadas
+    estragadas = game.add.group();
+    estragadas.enableBody = true;
+    estragadas.physicsBodyType = Phaser.Physics.ARCADE;
+
     // Adiciona a pontuação
     scoreText = game.add.text(16, 16, 'Score: 0', { fontSize: '32px', fill: '#f3fbfe' });
 }
@@ -42,7 +49,14 @@ function create() {
 function criarNovaFruta() {
 
     var x = game.world.randomX;
-    var fruta = frutas.create(x, -20, 'fruta_boa');
+    var fruta;
+    var chance = Math.random() * 100;
+
+    if (chance < 60) {
+        fruta = frutas.create(x, -20, 'fruta_boa');
+    } else {
+        fruta = estragadas.create(x, -40, 'fruta_ruim');
+    }
 
     fruta.angle = game.rnd.angle();
 
@@ -52,10 +66,23 @@ function criarNovaFruta() {
     timer = game.time.now + 2000;
 }
 
-function pegouFrutra(inPlayer, inFruta) {
+function pegouFruta(inPlayer, inFruta) {
     console.log("pegou!!!!");
     total--;
     score++;
+
+    scoreText.text = 'Score: ' + score;
+
+    inPlayer.body.velocity.y = -20;
+
+    inFruta.kill();
+
+}
+
+function pegouEstragada(inPlayer, inFruta) {
+    console.log("Rodou!!!!");
+    total--;
+    score -= 3;
 
     scoreText.text = 'Score: ' + score;
 
@@ -100,11 +127,13 @@ function update() {
         criarNovaFruta();
     }
 
-    // Checar colisão
+    // Checar colisões
 
-    game.physics.arcade.collide(player, frutas, pegouFrutra);
+    game.physics.arcade.collide(player, frutas, pegouFruta);
+    game.physics.arcade.collide(player, estragadas, pegouEstragada);
 
+    // Destruir frutas fora da tela
     frutas.forEach(destruirFrutasForaDaTela, this);
-
+    estragadas.forEach(destruirFrutasForaDaTela, this);
 
 }

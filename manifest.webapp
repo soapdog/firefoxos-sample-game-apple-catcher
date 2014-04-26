@@ -1,5 +1,9 @@
 {
-"name": "Apple Catcher",
-"launch_path": "/index.html",
-"orientation": ["landscape"]
+    "name": "Apple Catcher",
+    "launch_path": "/index.html",
+    "orientation": ["landscape"],
+    "icons": {
+        "90": "/assets/pics/icone_90.png",
+        "60": "/assets/pics/icone_60.png"
+    }
 }
