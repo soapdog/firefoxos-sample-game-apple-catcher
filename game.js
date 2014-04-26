@@ -1,140 +1,138 @@
+FruitGame.Game = {
+    create: function() {
+        this.timer = 0;
+        this.total = 0;
+        this.score = 0;
+        // incializa o sistema de física
+        this.physics.startSystem(Phaser.Physics.ARCADE);
 
-var game = new Phaser.Game(480, 320, Phaser.CANVAS, 'game', { preload: preload, create: create, update: update });
+        // adiciona o background
+        this.add.sprite(0, 0, 'cenario');
 
-var player;
-var timer = 0;
-var total = 0;
-var score = 0;
-var frutas;
-var estragadas;
-var scoreText;
+        // Adiciona o jogador
+        this.player = this.add.sprite(300, 240, 'cesta');
+        this.physics.arcade.enable(this.player);
+        this.player.enableBody = true;
+        this.player.body.collideWorldBounds = true;
 
-function preload() {
+        // Adiciona as frutas
+        this.frutas = this.add.group();
+        this.frutas.enableBody = true;
+        this.frutas.physicsBodyType = Phaser.Physics.ARCADE;
 
-    game.load.image('cenario', 'assets/pics/cenario.png');
-    game.load.image('fruta_boa', 'assets/pics/fruta_boa.png');
-    game.load.image('fruta_ruim', 'assets/pics/fruta_ruim.png');
-    game.load.image('cesta', 'assets/pics/cesta.png');
+        // Adiciona as estragadas
+        this.estragadas = this.add.group();
+        this.estragadas.enableBody = true;
+        this.estragadas.physicsBodyType = Phaser.Physics.ARCADE;
 
-}
+        // Adiciona a pontuação
+        this.scoreText = this.add.text(16, 16, 'Score: 0', { fontSize: '32px', fill: '#f3fbfe' });
 
-function create() {
+        this.cursors = this.input.keyboard.createCursorKeys()
+    },
 
-    // incializa o sistema de física
-    game.physics.startSystem(Phaser.Physics.ARCADE);
+    criarNovaFruta: function() {
 
-    // adiciona o background
-    game.add.sprite(0, 0, 'cenario');
+        var x = this.world.randomX;
+        var fruta;
+        var chance = Math.random() * 100;
 
-    // Adiciona o jogador
-    player = game.add.sprite(300, 240, 'cesta');
-    game.physics.arcade.enable(player);
-    player.enableBody = true;
-    player.body.collideWorldBounds = true;
+        if (chance < 60) {
+            fruta = this.frutas.create(x, -20, 'fruta_boa');
+        } else {
+            fruta = this.estragadas.create(x, -40, 'fruta_ruim');
+        }
 
-    // Adiciona as frutas
-    frutas = game.add.group();
-    frutas.enableBody = true;
-    frutas.physicsBodyType = Phaser.Physics.ARCADE;
+        fruta.angle = this.rnd.angle();
+        fruta.body.mass = 20;
 
-    // Adiciona as estragadas
-    estragadas = game.add.group();
-    estragadas.enableBody = true;
-    estragadas.physicsBodyType = Phaser.Physics.ARCADE;
+        this.physics.arcade.accelerateToXY(fruta, x, 400, 100);
 
-    // Adiciona a pontuação
-    scoreText = game.add.text(16, 16, 'Score: 0', { fontSize: '32px', fill: '#f3fbfe' });
-}
+        this.total++;
+        this.timer = this.time.now + 2000;
+    },
 
-function criarNovaFruta() {
+    pegouFruta: function(inPlayer, inFruta) {
+        console.log("pegou!!!!");
+        this.total--;
+        this.score++;
 
-    var x = game.world.randomX;
-    var fruta;
-    var chance = Math.random() * 100;
+        this.scoreText.text = 'Score: ' + this.score;
 
-    if (chance < 60) {
-        fruta = frutas.create(x, -20, 'fruta_boa');
-    } else {
-        fruta = estragadas.create(x, -40, 'fruta_ruim');
+        inPlayer.body.velocity.y = -20;
+
+        inFruta.kill();
+
+    },
+
+    pegouEstragada: function(inPlayer, inFruta) {
+        console.log("Rodou!!!!");
+        this.total--;
+        this.score -= 10;
+
+        console.log(this);
+        this.scoreText.text = 'Score: ' + this.score;
+
+        inPlayer.body.velocity.y = -20;
+
+        inFruta.kill();
+
+    },
+
+    destruirFrutasForaDaTela: function(fruta) {
+        if (fruta.world.y > 320) {
+            fruta.kill();
+            this.total--;
+        }
+    },
+
+
+    update: function() {
+
+        // movimento da cesta do jogador com toque
+
+        if (this.input.pointer1.isDown) {
+            if (this.input.pointer1.worldX > 240) {
+                this.player.body.velocity.x = 150;
+            }
+
+            if (this.input.pointer1.worldX <= 240) {
+                this.player.body.velocity.x = -150;
+            }
+        }
+
+        // Movimento da cesta do jogador com teclado
+
+        if (this.cursors.right.isDown) {
+            this.player.body.velocity.x = 150;
+        }
+
+        if (this.cursors.left.isDown) {
+            this.player.body.velocity.x = -150;
+        }
+
+
+        // se a cesta estiver na posição Y original, cancele o movimento vertical...
+
+        if (this.player.world.y <= 240) {
+            this.player.body.velocity.y = 0;
+        }
+
+        // Criar mais frutinhas
+
+        if (this.total < 50 && game.time.now > this.timer) {
+            this.criarNovaFruta();
+        }
+
+        // Checar colisões
+
+        this.physics.arcade.collide(this.player, this.frutas, this.pegouFruta, null, this);
+        this.physics.arcade.collide(this.player, this.estragadas, this.pegouEstragada, null, this);
+
+        // Destruir frutas fora da tela
+        this.frutas.forEach(this.destruirFrutasForaDaTela, this);
+        this.estragadas.forEach(this.destruirFrutasForaDaTela, this);
+
     }
-
-    fruta.angle = game.rnd.angle();
-    fruta.body.mass = 20;
-
-    game.physics.arcade.accelerateToXY(fruta, x, 400, 100);
-
-    total++;
-    timer = game.time.now + 2000;
-}
-
-function pegouFruta(inPlayer, inFruta) {
-    console.log("pegou!!!!");
-    total--;
-    score++;
-
-    scoreText.text = 'Score: ' + score;
-
-    inPlayer.body.velocity.y = -20;
-
-    inFruta.kill();
-
-}
-
-function pegouEstragada(inPlayer, inFruta) {
-    console.log("Rodou!!!!");
-    total--;
-    score -= 10;
-
-    scoreText.text = 'Score: ' + score;
-
-    inPlayer.body.velocity.y = -20;
-
-    inFruta.kill();
-
-}
-
-function destruirFrutasForaDaTela(fruta) {
-    if (fruta.world.y > 320) {
-        fruta.kill();
-        total--;
-    }
-}
-
-
-function update() {
-
-    // movimento da cesta do jogador
-
-    if (game.input.pointer1.isDown) {
-      if (game.input.pointer1.worldX > 240) {
-           player.body.velocity.x = 150;
-      }
-
-      if (game.input.pointer1.worldX <= 240) {
-           player.body.velocity.x = -150;
-      }
-    }
-
-    // se a cesta estiver na posição Y original, cancele o movimento vertical...
-
-    if (player.world.y <= 240) {
-        player.body.velocity.y = 0;
-    }
-
-    // Criar mais frutinhas
-
-    if (total < 50  && game.time.now > timer)
-    {
-        criarNovaFruta();
-    }
-
-    // Checar colisões
-
-    game.physics.arcade.collide(player, frutas, pegouFruta);
-    game.physics.arcade.collide(player, estragadas, pegouEstragada);
-
-    // Destruir frutas fora da tela
-    frutas.forEach(destruirFrutasForaDaTela, this);
-    estragadas.forEach(destruirFrutasForaDaTela, this);
 
 }
