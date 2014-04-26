@@ -59,6 +59,7 @@ function criarNovaFruta() {
     }
 
     fruta.angle = game.rnd.angle();
+    fruta.body.mass = 20;
 
     game.physics.arcade.accelerateToXY(fruta, x, 400, 100);
 
@@ -82,7 +83,7 @@ function pegouFruta(inPlayer, inFruta) {
 function pegouEstragada(inPlayer, inFruta) {
     console.log("Rodou!!!!");
     total--;
-    score -= 3;
+    score -= 10;
 
     scoreText.text = 'Score: ' + score;
 
