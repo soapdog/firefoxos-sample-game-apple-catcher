@@ -1,4 +1,6 @@
-FruitGame.Menu = {
+FruitGame.Menu = function(game) {};
+
+FruitGame.Menu.prototype = {
 
     create: function() {
        this.add.sprite(0, 0, 'cenario');

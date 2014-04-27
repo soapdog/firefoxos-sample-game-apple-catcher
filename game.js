@@ -1,4 +1,5 @@
-FruitGame.Game = {
+FruitGame.Game = function(game) {};
+FruitGame.Game.prototype = {
     create: function() {
         this.timer = 0;
         this.total = 0;
@@ -70,7 +71,6 @@ FruitGame.Game = {
         this.total--;
         this.score -= 10;
 
-        console.log(this);
         this.scoreText.text = 'Score: ' + this.score;
 
         inPlayer.body.velocity.y = -20;
@@ -120,7 +120,7 @@ FruitGame.Game = {
 
         // Criar mais frutinhas
 
-        if (this.total < 50 && game.time.now > this.timer) {
+        if (this.total < 50 && this.time.now > this.timer) {
             this.criarNovaFruta();
         }
 

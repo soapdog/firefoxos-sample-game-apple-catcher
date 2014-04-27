@@ -1,6 +1,8 @@
 var FruitGame = {};
 
-FruitGame.Preloader = {
+FruitGame.Preloader = function(game) {};
+
+FruitGame.Preloader.prototype = {
 
     preload: function() {
         this.load.image('cenario', 'assets/pics/cenario.png');
