@@ -1,3 +1,9 @@
+/**
+ *
+ * Esse é o pre-loader do aplicativo. Ele é resposável por garantir que os gráficos do app
+ * estão na memória antes do jogo começar.
+ */
+
 var FruitGame = {};
 
 FruitGame.Preloader = function(game) {};

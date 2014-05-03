@@ -1,3 +1,8 @@
+/**
+ * Apenas o menu do jogo para ficar mais bonito. Ao tocar no botão carregamos o próximo
+ * estado que é "game".
+ */
+
 FruitGame.Menu = function(game) {};
 
 FruitGame.Menu.prototype = {

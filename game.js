@@ -1,6 +1,10 @@
 FruitGame.Game = function(game) {};
+
 FruitGame.Game.prototype = {
     create: function() {
+        /*
+        Nessa função inicializamos o ambiente (World) do jogo.
+         */
         this.timer = 0;
         this.total = 0;
         this.score = 0;
@@ -33,7 +37,13 @@ FruitGame.Game.prototype = {
     },
 
     criarNovaFruta: function() {
+        /*
+        Essa função cria uma nova fruta um pouco acima da tela visivel.
+        Existe 60% de chance da fruta ser boa.
 
+        Frutas boas valem 1 ponto
+        Frutas estragadas valem -10 pontos.
+         */
         var x = this.world.randomX;
         var fruta;
         var chance = Math.random() * 100;
@@ -54,6 +64,9 @@ FruitGame.Game.prototype = {
     },
 
     pegouFruta: function(inPlayer, inFruta) {
+        /*
+        Essa função é chamada na colisão da fruta boa com a cesta.
+         */
         console.log("pegou!!!!");
         this.total--;
         this.score++;
@@ -67,6 +80,9 @@ FruitGame.Game.prototype = {
     },
 
     pegouEstragada: function(inPlayer, inFruta) {
+        /*
+        Essa função é chamada na colisão da fruta estragada com a cesta.
+         */
         console.log("Rodou!!!!");
         this.total--;
         this.score -= 10;
@@ -80,6 +96,10 @@ FruitGame.Game.prototype = {
     },
 
     destruirFrutasForaDaTela: function(fruta) {
+        /*
+        Essa função é chamada a todo update da tela e tem como função destruir
+        as frutas que já cairam abaixo da tela visível.
+         */
         if (fruta.world.y > 320) {
             fruta.kill();
             this.total--;
@@ -88,7 +108,11 @@ FruitGame.Game.prototype = {
 
 
     update: function() {
-
+        /*
+        Essa função é chamada em um loop para construir a tela do jogo.
+        Ela é chamada com "requestanimationframe()" que é o método mais indicado para a construção
+        de game loops com canvas.
+         */
         // movimento da cesta do jogador com toque
 
         if (this.input.pointer1.isDown) {
