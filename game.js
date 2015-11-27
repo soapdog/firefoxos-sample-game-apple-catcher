@@ -110,6 +110,13 @@ FruitGame.Game.prototype = {
     },
 
 
+    gameOver: function() {
+        alert("Game Over");
+
+        this.state.start("Menu");
+    },
+
+
     update: function() {
         /*
         Essa função é chamada em um loop para construir a tela do jogo.
@@ -171,6 +178,11 @@ FruitGame.Game.prototype = {
         // Destruir frutas fora da tela
         this.frutas.forEach(this.destruirFrutasForaDaTela, this);
         this.estragadas.forEach(this.destruirFrutasForaDaTela, this);
+
+        // Checar se é game over
+        if (this.score <= -50) {
+            this.gameOver();
+        }
 
     }
 
