@@ -33,7 +33,7 @@ FruitGame.Game.prototype = {
         // Adiciona a pontuação
         this.scoreText = this.add.text(16, 16, 'Score: 0', { fontSize: '32px', fill: '#f3fbfe' });
 
-        this.cursors = this.input.keyboard.createCursorKeys()
+        this.cursors = this.input.keyboard.createCursorKeys();
     },
 
     criarNovaFruta: function() {
@@ -60,7 +60,7 @@ FruitGame.Game.prototype = {
         this.physics.arcade.accelerateToXY(fruta, x, 400, 100);
 
         this.total++;
-        this.timer = this.time.now + 2000;
+        this.timer = this.time.now + 200;
     },
 
     pegouFruta: function(inPlayer, inFruta) {
@@ -73,7 +73,10 @@ FruitGame.Game.prototype = {
 
         this.scoreText.text = 'Score: ' + this.score;
 
-        inPlayer.body.velocity.y = -20;
+        //this.player.angle = this.rnd.angle();
+
+
+        //inPlayer.body.velocity.y = -20;
 
         inFruta.kill();
 
@@ -87,9 +90,9 @@ FruitGame.Game.prototype = {
         this.total--;
         this.score -= 10;
 
-        this.scoreText.text = 'Score: ' + this.score;
+        //this.scoreText.text = 'Score: ' + this.score;
 
-        inPlayer.body.velocity.y = -20;
+        //inPlayer.body.velocity.y = -20;
 
         inFruta.kill();
 
@@ -97,7 +100,7 @@ FruitGame.Game.prototype = {
 
     destruirFrutasForaDaTela: function(fruta) {
         /*
-        Essa função é chamada a todo update da tela e tem como função destruir
+        Essa função é chamada a nos updates da tela e tem como função destruir
         as frutas que já cairam abaixo da tela visível.
          */
         if (fruta.world.y > 320) {
@@ -139,19 +142,31 @@ FruitGame.Game.prototype = {
         // se a cesta estiver na posição Y original, cancele o movimento vertical...
 
         if (this.player.world.y <= 240) {
-            this.player.body.velocity.y = 0;
+            //this.player.body.velocity.y = 0;
         }
 
         // Criar mais frutinhas
 
-        if (this.total < 50 && this.time.now > this.timer) {
+        if (this.total < 150 && this.time.now > this.timer) {
             this.criarNovaFruta();
         }
 
         // Checar colisões
 
-        this.physics.arcade.collide(this.player, this.frutas, this.pegouFruta, null, this);
-        this.physics.arcade.collide(this.player, this.estragadas, this.pegouEstragada, null, this);
+        this.physics.arcade.collide(this.player, 
+            this.frutas, this.pegouFruta, null, this);
+
+        this.physics.arcade.collide(this.player, 
+            this.estragadas, this.pegouEstragada, null, this);
+
+        // Joga o maluco para o outro lado!
+        if (this.player.world.x <= 0) {
+            this.player.body.acceleration.x = 500;
+        }
+
+        if (this.player.world.x >= 400) {
+            this.player.body.acceleration.x = -500;
+        }
 
         // Destruir frutas fora da tela
         this.frutas.forEach(this.destruirFrutasForaDaTela, this);
