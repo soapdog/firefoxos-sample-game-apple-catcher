@@ -149,7 +149,7 @@ FruitGame.Game.prototype = {
         // se a cesta estiver na posição Y original, cancele o movimento vertical...
 
         if (this.player.world.y <= 240) {
-            //this.player.body.velocity.y = 0;
+            this.player.body.velocity.y = 0;
         }
 
         // Criar mais frutinhas
