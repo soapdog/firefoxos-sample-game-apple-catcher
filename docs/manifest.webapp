@@ -1,0 +1,14 @@
+{
+    "name": "The Fruit Game",
+    "launch_path": "/index.html",
+    "orientation": ["landscape"],
+    "description": "Catch the good fruits and avoid the bad ones",
+    "author": {
+        "name": "Amora Labs",
+        "url": "http://andregarzia.com"
+    },
+    "icons": {
+        "90": "/assets/pics/icone_90.png",
+        "60": "/assets/pics/icone_60.png"
+    }
+}
